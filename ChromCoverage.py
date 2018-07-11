@@ -3,6 +3,7 @@ import numpy as np
 
 BIN_SIZE = 10
 READ_SIZE = 100
+BED_GRAPH_HEADER = "chrom\tstart\tend\tvalue\n"
 
 def create_chrom_coverage_vec(positions_vec, chrom_length):
 	"""
@@ -27,11 +28,23 @@ def create_chrom_coverage_vec(positions_vec, chrom_length):
 	unique, counts = np.unique(read_positions, return_counts=True)
 	coverage_vec[unique] += counts
 	return coverage_vec
+	
+	
+def output_coverage_as_bedGraph(chrom_name, coverage_vec):
+	bed_graph_file = open("chrom_coverage_bedGraph.txt", "w")
+	bed_graph_file.write(BED_GRAPH_HEADER)
+	for i in range(len(coverage_vec)):
+		bed_graph_file.write("{}\t{}\t{}\t{}\n".format(chrom_name,
+		                                               i*BIN_SIZE,
+		                                               i*BIN_SIZE +
+		                                               BIN_SIZE,
+		                                               coverage_vec[i]))
+	bed_graph_file.close()
+	return
 
 
-######USAGE EXAMPLE######
-# if __name__ == '__main__':
-#     cov = create_chrom_coverage_vec(np.random.randint(0, 100, 100),
-#                                     200)
-#     print(cov)
-#########################
+def preform_coverage_analysis(chrom_name, chrom_length,
+                              positions_vec):
+	coverage_vec = create_chrom_coverage_vec(positions_vec,
+	                                         chrom_length)
+	output_coverage_as_bedGraph(chrom_name, coverage_vec)
