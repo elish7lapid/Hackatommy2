@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "$#" -ne 3 ]; then
+    echo "usage: extract_chr <bam_file> <chr_num> <out_file>"
+    exit 1
+fi
+samtools view "$1" | grep -w "chr$2" > "$3"
