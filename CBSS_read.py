@@ -18,9 +18,11 @@ class CBSS_read:
 
 
    def countMethylation(self):
-       self.methy_precentage = self.methylation.count("Z") /self.methylation.count("z)")   # new field
-       self.methy_count = self.methylation.count("Z")
-       self.unmethy_count = self.methylation.count("z)")   # new field
+       num_z = self.methylation.count("z")
+       num_Z = self.methylation.count("Z")
+       self.methy_precentage =num_Z /(num_z + num_Z  ) # new field)
+       self.methy_count = num_Z
+       self.unmethy_count =num_z   # new field
 
 
 
@@ -28,11 +30,7 @@ class CBSS_read:
 def main():
     if len(sys.argv )!= 2:
         print("USAGE : file name containing the reads")
-
-
     filename = sys.argv[1]
-
-
     file = open(filename)
 
 
