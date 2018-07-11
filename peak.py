@@ -24,10 +24,12 @@ class Peak:
        self.length = length
        self.summit_pos = summit_pos
        self.summit_height = summit_height
-       self.reads = []
+       self.reads_from_chip = []
+       self.reads_from_wce = []
        # self.index = index
        self.name = chr + "_" + str(index)
        self.methylation_percentage = 0
+       self.methylation_percentage_wce = 0
 
    def methylation_percent_in_peaks(self):
         """
@@ -36,10 +38,16 @@ class Peak:
         """
         counter_methylated = 0
         counter_non_methylated = 0
-        for read in self.reads:
+        for read in self.reads_from_chip:
             counter_methylated += read.methy_count
             counter_non_methylated += read.unmethy_count
         self.methyaltion_percent = counter_methylated / (
+        counter_methylated + counter_non_methylated)
+
+        for read in self.reads_from_wce:
+            counter_methylated += read.methy_count
+            counter_non_methylated += read.unmethy_count
+        self.methyaltion_percent_wce = counter_methylated / (
         counter_methylated + counter_non_methylated)
 
 def create_peak_vector(filename):
@@ -90,21 +98,20 @@ def main():
             # print(pos, seq, meth)
             read_obj = CBSS_read.CBSS_read(peak.chr, pos, seq, meth)
             # print(read_obj.methylation, read_obj.methy_count)
-            peak.reads.append(read_obj)
+            peak.reads_from_chip.append(read_obj)
 
-        peak.methylation_percent_in_peaks()
-        print("percentage: ",peak.methyaltion_percent)
-
-    for read in samfile_WCE.fetch(peak.chr, peak.start, peak.end):
+        for read in samfile_WCE.fetch(peak.chr, peak.start, peak.end):
             read_arr = str(read).split()
             pos = read_arr[3]
             seq = read_arr[9]
             meth = read_arr[-5]
             # print(pos, seq, meth)
-            read_obj = CBSS_read.CBSS_read(peak.chr, pos, seq, meth)
+            read_obj2 = CBSS_read.CBSS_read(peak.chr, pos, seq, meth)
             # print(read_obj.methylation, read_obj.methy_count)
-            peak.reads.append(read_obj)
+            peak.reads_from_wce.append(read_obj2)
 
+        peak.methylation_percent_in_peaks()
+        print("percentage: ", peak.methyaltion_percent)
 
     samfile_chipseq.close()
     samfile_WCE.close()
