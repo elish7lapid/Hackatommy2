@@ -12,13 +12,16 @@ class CBSS_read:
        self.pos = int(pos)
        self.seq = seq
        self.methylation = meth
-
+       self.countMethylation()
 
 
    def countMethylation(self):
        num_z = self.methylation.count("z")
        num_Z = self.methylation.count("Z")
-       self.methy_precentage =num_Z /(num_z + num_Z  ) # new field)
+       if (num_z == 0 and num_Z == 0):
+           self.methy_precentage = 0
+       else:
+           self.methy_precentage =num_Z /(num_z + num_Z  ) # new field)
        self.methy_count = num_Z
        self.unmethy_count =num_z   # new field
 

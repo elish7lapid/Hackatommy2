@@ -1,6 +1,7 @@
 import pysam
 import numpy as np
 import sys
+from MapReadsToGenome import CBSS_read
 
 CHROMO_IDEX = 0
 START_INDEX = 1
@@ -12,7 +13,7 @@ HEIGHT_INDEX = 8
 
 class Peak:
 
-   def _init_(self, chr, start, end, length, summit_pos,summit_height, index):
+   def __init__(self, chr, start, end, length, summit_pos,summit_height, index):
        self.chr = chr
        self.start = int(start)
        self.end = int(end)
@@ -24,6 +25,18 @@ class Peak:
        self.name = chr + "_" + str(index)
        self.methylation_percentage = 0
 
+   def methylation_percent_in_peaks(self):
+        """
+        :param peaks_list: list of all peaks objects
+        :return: null
+        """
+        counter_methylated = 0
+        counter_non_methylated = 0
+        for read in self.reads:
+            counter_methylated += read.methy_count
+            counter_non_methylated += read.unmethy_count
+        self.methyaltion_percent = counter_methylated / (
+        counter_methylated + counter_non_methylated)
 
 def create_peak_vector(filename):
     file = open(filename)
@@ -50,18 +63,31 @@ def create_peak_vector(filename):
 
 
 
-
 def main():
     if len(sys.argv )!= 2:
         print("USAGE : file name containing the peaks (xls)")
     filename = sys.argv[1]
 
-    peal_list = create_peak_vector(filename)
-    samfile = pysam.AlignmentFile("ex1.bam", "rb")
-    for peak in peal_list:
-        for read in samfile.fetch('chr1', peak.start, peak.end):
-            peak.reads.append[read]
+    peak_list = create_peak_vector(filename)[:2]
+    samfile = pysam.AlignmentFile("/mnt/5D37B39465DF0588/TEMP/hack/cat_H3K36me3_2D.bam.unique.bam", "rb")
+    # samfile = pysam.AlignmentFile("/mnt/5D37B39465DF0588/TEMP/hack/cat_H3K36me3_2D.sam", "r")
 
+
+    for peak in peak_list:
+        print( peak.start)
+        print(peak.end)
+        for read in samfile.fetch(peak.chr, peak.start, peak.end):
+            read_arr = str(read).split()
+            pos = read_arr[3]
+            seq = read_arr[9]
+            meth = read_arr[-5]
+            # print(pos, seq, meth)
+            read_obj = CBSS_read.CBSS_read(peak.chr, pos, seq, meth)
+            # print(read_obj.methylation, read_obj.methy_count)
+            peak.reads.append(read_obj)
+
+        peak.methylation_percent_in_peaks()
+        print("percentage: ",peak.methyaltion_percent)
     samfile.close()
 
 
