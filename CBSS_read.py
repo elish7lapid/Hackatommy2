@@ -9,7 +9,7 @@ class CBSS_read:
 
    def __init__(self, chr, pos, seq, meth):
        self.chr = chr
-       self.pos = pos
+       self.pos = int(pos)
        self.seq = seq
        self.methylation = meth
 

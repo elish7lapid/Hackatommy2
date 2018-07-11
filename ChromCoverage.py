@@ -34,11 +34,12 @@ def output_coverage_as_bedGraph(chrom_name, coverage_vec):
 	bed_graph_file = open("chrom_coverage_bedGraph.txt", "w")
 	bed_graph_file.write(BED_GRAPH_HEADER)
 	for i in range(len(coverage_vec)):
-		bed_graph_file.write("{}\t{}\t{}\t{}\n".format(chrom_name,
-		                                               i*BIN_SIZE,
-		                                               i*BIN_SIZE +
-		                                               BIN_SIZE,
-		                                               coverage_vec[i]))
+		if coverage_vec[i] > 0:
+			bed_graph_file.write("{}\t{}\t{}\t{}\n".format(chrom_name,
+			                                               i*BIN_SIZE,
+			                                               i*BIN_SIZE +
+			                                               BIN_SIZE,
+			                                               coverage_vec[i]))
 	bed_graph_file.close()
 	return
 
@@ -48,3 +49,4 @@ def preform_coverage_analysis(chrom_name, chrom_length,
 	coverage_vec = create_chrom_coverage_vec(positions_vec,
 	                                         chrom_length)
 	output_coverage_as_bedGraph(chrom_name, coverage_vec)
+	
