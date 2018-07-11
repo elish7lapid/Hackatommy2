@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-import sys
-
 
 
 name_to_index ={"QNAME":0, "FLAG":1, "RNAME":2, "POS":3, "MAPQ":4, "CIGAR":5, "RNEXT":6, "PNEXT":7, "TLEN":8, "SEQ":9,
@@ -25,15 +23,8 @@ class CBSS_read:
        self.unmethy_count =num_z   # new field
 
 
-
-
-def main():
-    if len(sys.argv )!= 2:
-        print("USAGE : file name containing the reads")
-    filename = sys.argv[1]
+def create_reads_vector(filename):
     file = open(filename)
-
-
     # table_file = pd.read_table(filename,header = None, sep = "\t", index_col=False)
     # total_rows = table_file.shape[0]
 
@@ -50,7 +41,3 @@ def main():
 
     reads_vector = np.array(reads_list)
     return reads_vector
-
-
-if __name__ == '__main__':
-    main()
